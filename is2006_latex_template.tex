@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage{interspeech2006,amssymb,amsmath,epsfig}
+\usepackage{hyperref} % For hyperlinks in the PDF
+
+\usepackage{natbib} % Harvard style bib
+\bibliographystyle{IEEEtranN}
+
+\usepackage{lipsum} % Dummy text
+
+\setcounter{page}{1}
+\sloppy		% better line breaks
+\ninept
+%SM below a registered trademark definition
+\def\reg{{\rm\ooalign{\hfil
+     \raise.07ex\hbox{\scriptsize R}\hfil\crcr\mathhexbox20D}}}
+
+
+\title{System Software Report: Adding a System Calls}
+
+\makeatletter
+\def\name#1{\gdef\@name{#1\\}}
+\makeatother
+\name{{\em Anthony Troy and Liam Allen}}
+
+\address{School of Computing  \\
+Dublin City University \\
+Dublin 9, Ireland\\
+{\small \tt\{anthony.troy3,liam.allen5\}@mail.dcu.ie}
+}
+
+
+
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\lipsum[1]
+\end{abstract}
+
+\section{Introduction}
+Example citation \citep{db}. \lipsum[1]
+
+
+\section{Related work}
+\lipsum[1]
+
+\section{Study Design}
+\lipsum[1]
+\begin{itemize}
+\item \lipsum[1]
+\end{itemize}
+
+\subsubsection{Todo - Some title}
+\lipsum[1]
+
+\subsubsection{Todo - Another title}
+\lipsum[1]
+
+
+\section{Discussion}
+\lipsum[1]
+
+\section{Conclusions}
+\lipsum[1]
+
+
+\vspace{-7.5mm}
+\renewcommand{\refname}{\section{References}}
+\bibliography{is2006_latex_template}
+
+\end{document}
