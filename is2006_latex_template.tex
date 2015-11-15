@@ -75,12 +75,49 @@ and Samsung, though anyone can potentially contribute. Being licensed under the
 ``GNU General Public License (GPL) version 2.0", one can download the kernel source
 code and modify it, however distributing any changes requires making the altered source 
 code available \citep{Love}. 
-
-
-
-
-\section{Related work}
-\lipsum[1]
+\par
+Notwithstanding its monolithic design, \citet{Kroah} asserts that the kernel is the 
+most flexible OS in existence. More specifically, Linux can be characterised 
+as a ``modern" monolithic kernel in that it provides a high-level interface over the hardware
+but can also load executable modules at runtime. Before we explore the kernel's
+system call application programming interface (API), it is important to take stock
+of exactly what the kernel is responsible for in terms of the overall operating system.
+\par 
+Albeit an undesirable thing to do, it is indeed possible 
+to run programs on a machine without a kernel. Nevertheless, the
+presence of a kernel  of course ``simplifies the writing and use of other programs,
+and increases the power and flexibility available to programmers" \citep{Kerrisk}.
+Meaning, on a high-level, the kernel provides a layer of abstraction over a machine's 
+resources. Among other things, this layer is responsible for the 
+following:
+\begin{itemize}
+  \item \textbf{Process creation and termination.} Under Linux a process
+  is a program in execution wherein the object code is loaded 
+  into memory along with other resources such as ``open files and pending signals, internal kernel data, processor state, a memory address space with one or more memory mappings, one or more threads of execution, and a data section containing global variables".
+   Upon creation, the kernel first ``forks" 
+a copy of the parent task and then ``execs" the process by loading the new
+executable into the address space Upon termination, the kernel frees any resources
+held by the process and notifies the parent \citep{Love}.
+ \item \textbf{Process scheduling.} The Linux kernel is preemptive and multitasking, meaning
+ that the rules determining when given processes get ran and on what CPU is managed by
+ a separate subsystem, the kernel scheduler.\ Information about each process is held in a
+process descriptor in dynamic memory and the scheduler divides processor time 
+between runnable scheduled processes \citep{Love7, Kerrisk}.
+ \item \textbf{Memory management.} In terms of user-space, 
+ physical memory is a limited resource which must be fairly and efficiently shared among
+ processes. As Linux is a virtual memory OS, the kernel virtualises memory among processes. 
+ Meaning each process conceptually ``has full access to the system's physical memory" 
+ from within their own process address space \citep{Love}.
+ \item \textbf{Filesystem interfacing.} Linux's Virtual Filesystem (VFS) is a kernel
+ subsystem which provides filesystem-related interfaces to user-space programs. Importantly,
+ ``all filesystems rely on the VFS to enable them not only to coexist, but also to interoperate"
+  \citep{Love}. Hence, a single call to read a file from any filesystem on any device is made possible. 
+ \newpage
+ \item \textbf{Device interfacing.} Simplified through VFS, the
+ kernel provides standardised APIs to interface with mounted compute devices. 
+ The kernel's process scheduler also arbitrates the concurrent access of multiple
+processes to each device.
+\end{itemize}
 
 \section{Study Design}
 \lipsum[1]
