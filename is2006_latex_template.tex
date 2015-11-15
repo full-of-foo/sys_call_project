@@ -52,15 +52,27 @@ fundamental mechanism which facilitates this
 extensibility, the kernel system call interface. Subsequently, in conjunction 
 with our accompanying source code, we contribute the implementation of two trivial Linux system
 calls.
-
-
-
-
-
 \end{abstract}
 
 \section{Introduction}
-Example citation \citep{db}. \lipsum[1]
+Since being first developed in 1991 by Linus Torvalds, Linux has quickly 
+the surpassed the hobbyist market to becoming widely adopted in 
+production environments. It currently powers everything from ``cell 
+phones and embedded devices to more than 90 percent of the world's top 
+500 supercomputers" \citep{Love7}. Then studying at the University of Helsinki,
+Torvalds was abashed by the state of the operating systems (OS) space. Dominant 
+OSs at this time were either proprietary or inextensible Unix systems. 
+Accordingly, Torvalds released an immature but full-fledged Unix that was extensible
+by design and licence. It is important to note that the initial success of the project 
+would not have been possible without this permissive open-source license. 
+Not long thereafter, Linux quickly attracted interests of many and ``evolved into a collaborative 
+project" \citep{Love}.
+\par
+
+
+
+
+
 
 
 \section{Related work}
@@ -74,6 +86,8 @@ Example citation \citep{db}. \lipsum[1]
 
 \subsubsection{Todo - Some title}
 \lipsum[1]
+The kernel source code should also never be placed in the /usr/src/linux/ direc- tory, as that is the location of the kernel that the system libraries were built against,notyournewcustomkernel.Donotdoanykerneldevelopmentunder the /usr/src/ directory tree at all, but only in a local user directory where nothing bad can happen to the system.
+(Nutshell)
 
 \subsubsection{Todo - Another title}
 \lipsum[1]
