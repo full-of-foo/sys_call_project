@@ -126,13 +126,15 @@ hardware types and environments. These feats were made possible
 through the maintenance of a concise and fundamental interface 
 from which processes interact with the system, the system call
 API. The rest of this paper discusses this interface while 
-contributing two example system call implementations.
+contributing two example system call implementations
  
 
-\section{System Call Interface} 
-In addition to providing mechanisms to create and terminate processes, system calls (or syscalls) permit processes to interact with hardware and other OS resources. 
-They essentially act as concise entry-points into the kernel.
-It is important to note that, in contrast to normal user applications, 
+\section{System Calls} 
+\subsection{Syscall Interface}
+In addition to providing mechanisms to create and terminate processes, 
+system calls (or syscalls) permit processes to interact with hardware 
+and other OS resources. They essentially act as concise entry-points into the kernel. 
+Consequently, it is important to note that, in contrast to normal user applications, 
 the kernel lives in a privileged system state having a ``protected memory space and full 
 access to the hardware". Whereas user-space hosts only user-defined applications that see a subset 
 of the available system resources \citep{Love}. This 
@@ -140,12 +142,29 @@ bridging interface over privileged resources
 is key in ensuring that processes do not misbehave, which
 in turn provides a more stable system.
 \par
-TODO -  examples of syscalls. what happens when you call one
+In general applications never directly execute system calls, instead
+standard C library functions are often used which in turn implement
+the system call interface. For instance, the fopen() function extends upon 
+the open() syscall whereby it opens the file pointed to by path string parameter and returns the
+associated stream \citep{Kerrisk}. These abstractions over syscalls provide caller-friendly interfaces 
+which serve to save developer time in both writing and debugging code. Other notable 
+library functions implementing system calls include write(), printf(), malloc() and free().
+\par
+The number of calls available is architecture dependant, 
+however typically more than 90 percent of syscalls are implemented by all architectures. 
+Interestingly, notwithstanding its large code base, the Linux kernel only implements around 350 system 
+calls as of version 3.0 \citep{Love7}. Each system call is represented by a unique number that 
+cannot change. The kernel does not facilitate for the dynamic adding or removing of syscalls, in
+turn syscall numbers cannot be recycled as this would break backward-compatibility. 
+\par
 
+\subsection{Syscall Invocation}
+A system call changes the processor state from user mode to kernel mode, so that the CPU can access protected kernel memory.
+.These interfaces give appli- cations controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources.The interfaces act as the messengers between applications and the kernel, with the applications issuing various requests and the kernel fulfilling them (or returning an error).The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system (Love)
 \lipsum[1]
 
 
-\section{Adding a System Call}
+\section{Study: Adding a Syscall}
 \lipsum[1]
 \begin{itemize}
 \item \lipsum[1]
