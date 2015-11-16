@@ -90,6 +90,7 @@ and increases the power and flexibility available to programmers" \citep{Kerrisk
 Meaning, on a high-level, the kernel provides a layer of abstraction over a machine's 
 resources. Among other things, this layer is responsible for the 
 following:
+\vspace{1.8mm}
 \begin{itemize}
   \item \textbf{Process creation and termination.} Under Linux a process
   is a program in execution wherein the object code is loaded 
@@ -118,6 +119,19 @@ between runnable scheduled processes \citep{Love7, Kerrisk}.
  The kernel's process scheduler also arbitrates the concurrent access of multiple
 processes to each device.
 \end{itemize}
+
+\noindent Robert \citet{Love7}, a long-standing developer on the Google kernel team, 
+stresses that no other OS has scaled so well while supporting so many 
+hardware types and environments. These feats were made possible 
+through the maintenance of a concise and fundamental interface 
+from which processes interact with the system, the system call
+API. The rest of this paper discusses this interface while 
+contributing two example system call implementations.
+ 
+
+\section{System Call Interface}
+\lipsum[1]
+
 
 \section{Study Design}
 \lipsum[1]
