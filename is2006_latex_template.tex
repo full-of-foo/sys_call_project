@@ -159,18 +159,38 @@ turn syscall numbers cannot be recycled as this would break backward-compatibili
 \par
 
 \subsection{Syscall Invocation}
-A system call changes the processor state from user mode to kernel mode, so that the CPU can access protected kernel memory.
-.These interfaces give appli- cations controlled access to hardware, a mechanism with which to create new processes and communicate with existing ones, and the capability to request other operating system resources.The interfaces act as the messengers between applications and the kernel, with the applications issuing various requests and the kernel fulfilling them (or returning an error).The existence of these interfaces, and the fact that applications are not free to directly do whatever they want, is key to providing a stable system (Love)
-\lipsum[1]
+From the application perspective, a C library function implementing a 
+syscall executes as transparently as any other function. On the surface 
+fopen() terminates the same way strcpy() does. This is because syscalls
+in Linux ``are faster than in many other operating systems" \citep{Love7}.
+The kernel is quickly and transparently switching from user-mode to kernel-mode,
+executing the call and returning back to user-mode. The implementation of
+fopen() invokes a software interrupt to switch to kernel-space through 
+incurring a special exception to be managed by the system call handler.   
+\par
+In Fig 1, we illustrate the high-level steps involved in invoking execve() 
+under an x86-32 architecture. First, the programs invokes the library function
+which involves preparing the function arguments for the kernel by placing them 
+into registers on the stack. Following, the function stores the execve() system call
+number in another register. Now prepared for the context switch, the function invokes
+the software interrupt instruction (0x80) which prompts the system
+call handler to transfer the register values onto the kernel stack. Subsequently, 
+the execve() system call service routine is invoked wherein the parameter 
+values are validated and the requested work is performed. Finally the 
+kernel stack registers are restored and execution returns to the execve() library 
+function with an integer flag to indicate the success or failure of the system call.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.462\textwidth]{img}
+    \caption{Invoking a syscall (x86-32)}
+    \label{fig:img}
+\end{figure}
 
 
 \section{Study: Adding a Syscall}
-\lipsum[1]
-\begin{itemize}
-\item \lipsum[1]
-\end{itemize}
 
-\subsubsection{Todo - Some title}
+\subsubsection{Hello World Syscall}
 \lipsum[1]
 The kernel source code should also never be placed in the /usr/src/linux/ direc- tory, as that is the location of the kernel that the system libraries were built against,notyournewcustomkernel.Donotdoanykerneldevelopmentunder the /usr/src/ directory tree at all, but only in a local user directory where nothing bad can happen to the system.
 (Nutshell)
