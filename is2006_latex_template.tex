@@ -6,6 +6,13 @@
 \bibliographystyle{IEEEtranN}
 
 \usepackage{lipsum} % Dummy text
+\usepackage{listings} % Code
+\usepackage{color}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
 
 \setcounter{page}{1}
 \sloppy		% better line breaks
@@ -215,21 +222,49 @@ the 3.3.8 kernel. These files are follows:
   \item hello/hello.c
   \item datastructs/datastructs.c
 \end{itemize}
+
+\noindent Admittedly, our selection of the 3.3.8 kernel on a Debian 6 distribution
+does not have great significance. In contrast to the 2.6 series, for our purposes 
+we only gain an easier to configure default boot-loader (Grub2) along with a smarter 
+`make config' kernel task. The commands to fetch and prepare our kernel source
+for development are captured in our bootstrap\@.sh bash script. It includes the following commands: 
+\begin{lstlisting}[language=Bash]
+#!bin/bash
+sudo apt-get install build-essential -y && \
+sudo apt-get install libncurses5-dev -y && \
+sudo apt-get install gcc -y && \
+sudo apt-get update -y && \
+sudo apt-get upgrade -y && \
+wget $KERNEL_SRC \
+  -O linux-3.3.8.tar.xz && \
+rm -fr $USER/dev && \
+mkdir -p $USER/dev && \
+tar -xfv linux-3.3.8.tar.xz \
+  -C $USER/dev/linux-3.3.8
+\end{lstlisting} 
+Custom kernel sources are often mistakenly placed in the /usr/src directory. 
+In practice it is strongly discouraged to develop under /usr/src/linux as it is
+commonly ``the location of the kernel that 
+the system libraries were built against" \citep{Love}.
+  
   
 \subsection{Basic: Say Hello World}
 \lipsum[1]
-The kernel source code should also never be placed in the /usr/src/linux/ direc- tory, as that is the location of the kernel that the system libraries were built against,notyournewcustomkernel.Donotdoanykerneldevelopmentunder the /usr/src/ directory tree at all, but only in a local user directory where nothing bad can happen to the system.
-(Nutshell)
 
 \subsection{Intermediate: Dealing with Kernel Data Structures}
 \lipsum[1]
 
-
-\section{Discussion}
-\lipsum[1]
-
 \section{Conclusions}
-\lipsum[1]
+The Linux kernel is a powerful and interoperable operating system that is currently 
+powering smartphones, supercomputers, desktops and web servers. 
+Being extensible in both design and licensing it is easy 
+to customise the kernel to particular needs. In this paper we reviewed 
+the central interface that allows the kernel to be so flexible while remaining stable.
+Linux system calls serve as a managed bridge into the kernel and must be carefully 
+designed and implemented. Along with our accompanying source code, this paper
+contributed a detailed implementation of two Linux syscalls,
+demonstrating the approachability and simplicity of the Linux system call interface.
+
 
 
 \vspace{-7.5mm}
