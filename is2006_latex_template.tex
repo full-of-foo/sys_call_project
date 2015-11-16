@@ -190,12 +190,38 @@ function with an integer flag to indicate the success or failure of the system c
 
 \section{Study: Adding a Syscall}
 
-\subsubsection{Hello World Syscall}
+\citet{Love7} asserts that a new system call should be both purposeful and ephemeral in execution while also standing the test of time. 
+Meaning that a new system call should not be multiplexing. It should have one purpose which is fulfilled efficiently and transparently 
+in adherence with the Unix motto, ``provide mechanism, not policy". Accordingly, 
+an overly precise interface may not fair well over time so it should be generalised where possible. 
+\par
+Adding a new Linux system call is relatively simply. Our accompanying source code demonstrates
+how straight-forward this actually is. Nevertheless, it is important to note
+that there are compelling reasons against adding 
+a system call in practice, these are as follows: for most use-cases a syscall is overkill; 
+after a syscall is released the interface cannot ever change;
+and going forward each architecture needs to support the syscall.
+\par 
+We present the adding of two trivial x86-32 system calls, the first simply generates some
+kernel logs and the second deals with kernel data structures. Our enclosed 
+source code is in text snippets form representing the additions made to
+the 3.3.8 kernel. These files are follows:
+\begin{itemize}
+  \item bootstrap.sh
+  \item install.sh
+  \item Makefile\_snippet.txt
+  \item arch/x86/boot/syscalls/syscall\_32\_snippet.txt
+  \item include/linux/syscall\_snippet.txt
+  \item hello/hello.c
+  \item datastructs/datastructs.c
+\end{itemize}
+  
+\subsection{Basic: Say Hello World}
 \lipsum[1]
 The kernel source code should also never be placed in the /usr/src/linux/ direc- tory, as that is the location of the kernel that the system libraries were built against,notyournewcustomkernel.Donotdoanykerneldevelopmentunder the /usr/src/ directory tree at all, but only in a local user directory where nothing bad can happen to the system.
 (Nutshell)
 
-\subsubsection{Todo - Another title}
+\subsection{Intermediate: Dealing with Kernel Data Structures}
 \lipsum[1]
 
 
