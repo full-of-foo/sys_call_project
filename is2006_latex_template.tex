@@ -129,11 +129,23 @@ API. The rest of this paper discusses this interface while
 contributing two example system call implementations.
  
 
-\section{System Call Interface}
+\section{System Call Interface} 
+In addition to providing mechanisms to create and terminate processes, system calls (or syscalls) permit processes to interact with hardware and other OS resources. 
+They essentially act as concise entry-points into the kernel.
+It is important to note that, in contrast to normal user applications, 
+the kernel lives in a privileged system state having a ``protected memory space and full 
+access to the hardware". Whereas user-space hosts only user-defined applications that see a subset 
+of the available system resources \citep{Love}. This 
+bridging interface over privileged resources
+is key in ensuring that processes do not misbehave, which
+in turn provides a more stable system.
+\par
+TODO -  examples of syscalls. what happens when you call one
+
 \lipsum[1]
 
 
-\section{Study Design}
+\section{Adding a System Call}
 \lipsum[1]
 \begin{itemize}
 \item \lipsum[1]
