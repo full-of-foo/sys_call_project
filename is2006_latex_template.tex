@@ -214,13 +214,15 @@ kernel logs and the second deals with kernel data structures. Our enclosed
 source code is in text snippets form representing the additions made to
 the 3.3.8 kernel. These files are follows:
 \begin{itemize}
-  \item bootstrap.sh
-  \item install.sh
-  \item Makefile\_snippet.txt
-  \item arch/x86/syscalls/syscall\_32\_snippet.txt
-  \item include/linux/syscall\_snippet.txt
-  \item hello/hello.c
-  \item datastructs/datastructs.c
+  \item src/bootstrap.sh
+  \item src/install.sh
+  \item src/Makefile\_snippet.txt
+  \item src/arch/x86/syscalls/syscall\_32\_snippet.txt
+  \item src/include/linux/syscall\_snippet.txt
+  \item src/hello/hello.c
+  \item src/datastructs/datastructs.c
+  \item test/userspace\_hello.c
+  \item test/userspace\_datastructs.c
 \end{itemize}
 
 \noindent Admittedly, our selection of the 3.3.8 kernel on a Debian 6 distribution
@@ -243,8 +245,22 @@ tar -xfv linux-3.3.8.tar.xz \
 Custom kernel sources are often mistakenly placed in the /usr/src directory. 
 In practice it is strongly discouraged to develop under /usr/src/linux as it is
 commonly ``the location of the kernel that 
-the system libraries were built against" \citep{Love}.
-\par TODO - explain package installs.
+the system libraries were built against" \citep{Love}. Accordingly, we develop
+our kernel source from a user directory.
+\par
+Compiling and installing the Linux kernel only
+requires installing the Make and GNU Compiler Collection (gcc) packages on 
+most Linux distributions. As the kernel
+developers use ``both ISO C99 and GNU C extensions to the C language", 
+we need at least gcc version 3\@.2 but 4\@.4 onwards is recommended \citep{Love7}. 
+After installing gcc we fetch the kernel source tarball and move into 
+our target user directory for development.
+\par
+Now prepared for development we can begin adding our system calls.
+
+
+350	i386	opsyscall	sys_opsyscall
+
 \par TODO - explain all source code changes.
 \par TODO - explain install script. The commands to configure and install our custom kernel
 are captured in our install\@.sh bash script. 
