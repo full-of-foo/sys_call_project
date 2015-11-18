@@ -217,7 +217,7 @@ the 3.3.8 kernel. These files are follows:
   \item bootstrap.sh
   \item install.sh
   \item Makefile\_snippet.txt
-  \item arch/x86/boot/syscalls/syscall\_32\_snippet.txt
+  \item arch/x86/syscalls/syscall\_32\_snippet.txt
   \item include/linux/syscall\_snippet.txt
   \item hello/hello.c
   \item datastructs/datastructs.c
@@ -230,8 +230,6 @@ we only gain an easier to configure default boot-loader (Grub2) along with a sma
 for development are captured in our bootstrap\@.sh bash script. It includes the following commands: 
 \begin{lstlisting}[language=Bash]
 #!bin/bash
-sudo apt-get install build-essential -y && \
-sudo apt-get install libncurses5-dev -y && \
 sudo apt-get install gcc -y && \
 sudo apt-get update -y && \
 sudo apt-get upgrade -y && \
@@ -246,6 +244,25 @@ Custom kernel sources are often mistakenly placed in the /usr/src directory.
 In practice it is strongly discouraged to develop under /usr/src/linux as it is
 commonly ``the location of the kernel that 
 the system libraries were built against" \citep{Love}.
+\par TODO - explain package installs.
+\par TODO - explain all source code changes.
+\par TODO - explain install script. The commands to configure and install our custom kernel
+are captured in our install\@.sh bash script. 
+It includes the following commands: 
+\begin{lstlisting}[language=Bash]
+#!bin/bash
+cd $USER/dev/linux-3.3.8 && \
+rm -f ./.config && \
+sudo cp /boot/config-`uname -r` .config && \
+sudo chown $USER ./config && \
+yes "" | make oldconfig && \
+make -j4 && \
+sudo make install_modules install && \
+sudo mkinitramfs \
+    -o /boot/initrd.img-3.3.8 3.3.8 && \
+sudo update-grub && \
+sudo reboot
+\end{lstlisting}   
   
   
 \subsection{Basic: Say Hello World}
