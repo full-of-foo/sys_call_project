@@ -225,6 +225,8 @@ the 3.3.8 kernel. These files are follows:
   \item test/userspace\_datastructs.c
 \end{itemize}
 
+\subsection{Preparatory Work}
+
 \noindent Admittedly, our selection of the 3.3.8 kernel on a Debian 6 distribution
 does not have great significance. In contrast to the 2.6 series, for our purposes 
 we only gain an easier to configure default boot-loader (Grub2) along with a smarter 
@@ -253,19 +255,121 @@ requires installing the Make and GNU Compiler Collection (gcc) packages on
 most Linux distributions. As the kernel
 developers use ``both ISO C99 and GNU C extensions to the C language", 
 we need at least gcc version 3\@.2 but 4\@.4 onwards is recommended \citep{Love7}. 
-After installing gcc we fetch the kernel source tarball and move into 
+After installing gcc 4.4.5 we fetch the kernel source tarball and move into 
 our target user directory for development.
 \par
 Now prepared for development we can begin adding our system calls.
+At runtime the kernel stores all registered system calls as function-pointers 
+in the sys\_call\_table array. This list is partly derived from the given architecture's system call table; 
+a declarative file which lists all the supported syscalls by number and function name. Thus,
+for our purposes we append to only the syscall table for x86-32 as follows:
+\begin{lstlisting}[language=Bash,  tabsize=4,
+  showspaces=false,
+  showstringspaces=false]
+350	i386	hello	     sys_hello
+351	i386	datastructs  sys_datastructs
+\end{lstlisting} 
+In practice a new system call should be captured in include/asm/unistd\@.h, wherein 
+the new syscall call's number is mapped to a constant. Consequently, developers
+do need to keep track of the actual system numbers, only the corresponding names need to be referenced
+\citep{Love7}. 
+For the sake of brevity and simplicity we bypass this step and later reference the syscall number explicitly.
+Nevertheless, such an alternation would involve appending the following to the unistd header file:
+\begin{lstlisting}[language=C]
+#define __NR_hello       350
+#define __NR_datastructs 351
+\end{lstlisting}
+Before implementing our system calls we must first define their respective
+prototypes. Like any C function that needs be used across object files,
+an associated prototype must be declared in a header so the
+function can ultimately be linked. Regardless of corresponding target architecture, all
+system call prototypes reside under the include/linux/syscall header file. Thus,
+we append the following prototypes: 
+\begin{lstlisting}[language=C]
+asmlinkage long sys_hello(const char *test)
+asmlinkage long sys_datastructs(void)
+\end{lstlisting} 
+Miscellaneous syscall implementations commonly live in kernel/sys\@.c which, like
+all source living under the 'kernel' module, is compiled into the kernel image. Alternatively,
+one can define a new module to be compiled along with the kernel.  Being adventurous, we create 
+two new modules for our respective syscalls as follows:
+\begin{lstlisting}[language=Bash]
+#!bin/bash
+cd $USER/dev/linux-3.3.8 && \
+mkdir -p hello && \
+touch hello/hello.c && \
+echo "obj-y := hello.o" \
+	>> hello/Makefile && \
+mkdir -p datastructs && \
+touch datastructs/datastructs.c && \
+echo "obj-y := datastructs.o" \
+	>> datastructs/Makefile
+\end{lstlisting} 
+Finally, these new modules must be added to the kernel's compilation pipeline. In defining respective
+Makefiles for these modules we add their compiled object files to a "obj-y" variable, this ensures
+that kbuild will include these objects files in the overall kernel build. For kbuild to first be aware that
+there new modules to track we must update the primary kernel Makefile as follows:
+\begin{lstlisting}[language=Bash]
+core-y := usr/ hello datastructs
+\end{lstlisting} 
+  
+\subsection{Saying Hello World}
+With our preparatory work now in place we can implement our first system call which 
+simply demonstrates some basic kernel logging. The involved source is as follows:
+\begin{lstlisting}[language=C]
+#include <linux/kernel.h>
+#include <linux/syscalls.h>
+asmlinkage long sys_hello(const char *test)
+{
+    printk(KERN_ALERT "Hello %s\n", test);	
+    return 0;
+}
+\end{lstlisting} 
 
+\subsection{Dealing with Kernel Data Structures}
+Our second and slightly less-naive system call involves playing around task\_structs, which are circular doubly-linked lists representing processes or tasks. 
+The implementation is as follows:
+\begin{lstlisting}[language=C]
+#include <linux/kernel.h>
+#include <linux/syscalls.h>
+#include <linux/printk.h>
+#include <linux/sched.h>
+#include <linux/thread_info.h>
+#include <asm-generic/current/h>
+asmlinkage long sys_datastructs(void)
+{
+    printk(KERN_ALERT "Current \
+          process name is: %s \n", 
+          current->comm);
+    printk(KERN_ALERT "Current \
+    	   PID: %i \n", 
+	   current->pid);
+    printk(KERN_ALERT "Parent \
+    	   process name: %s \n",
+	   current->parent->comm);
+    printk(KERN_ALERT "Parent \
+          process PID: %i \n", 
+          current->parent->pid);
+ 	
+    for_each_process(task)
+    {
+        pr_info("%s [%d] %ld %d \n", 
+            task->comm, task->pid, 
+            task->state, task->prio);
+    }
+    
+    return 0;
+}
 
-350	i386	opsyscall	sys_opsyscall
+\end{lstlisting} 
 
-\par TODO - explain all source code changes.
-\par TODO - explain install script. The commands to configure and install our custom kernel
-are captured in our install\@.sh bash script. 
+\subsection{Installing and Testing the Kernel}
+Given that our new system calls are implemented we can begin to compile and install the kernel.
+Similar to our bootstrapping script, the commands to configure and install our custom kernel
+are captured in our install\@.sh script. 
 It includes the following commands: 
 \begin{lstlisting}[language=Bash]
+
 #!bin/bash
 cd $USER/dev/linux-3.3.8 && \
 rm -f ./.config && \
@@ -278,14 +382,57 @@ sudo mkinitramfs \
     -o /boot/initrd.img-3.3.8 3.3.8 && \
 sudo update-grub && \
 sudo reboot
-\end{lstlisting}   
-  
-  
-\subsection{Basic: Say Hello World}
-\lipsum[1]
 
-\subsection{Intermediate: Dealing with Kernel Data Structures}
-\lipsum[1]
+\end{lstlisting}   
+As entailed above, we first configure and compile our new kernel. Taking our
+old configuration file from the currently installed kernel we can be almost 
+assured that there will be configuration parity between both kernels. Subsequently,
+we install compiled kernel's binary, a vimlinux file, into the boot directory 
+by running the install Make target. Similarly, we install our compiled kernel modules 
+into /include/modules with by running install\_modules. Following, we must
+create initramfs image corresponding with our kernel as on boot 
+it will used an initial root file system. Finally, we update our boot-loader to respect 
+our new linux image by making it bootable. 
+Upon restarting our machine we can then boot from our custom linux 3.3.8 kernel and test our 
+new system calls. A userspace program testing both calls is as follows: 
+\begin{lstlisting}[language=C]
+
+
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+int main()
+{
+    syscall(350, " World!");
+    
+    int pid;
+    syscall(351);
+
+    pid = fork();	
+    if(pid < 0)
+    {
+        fprintf(stderr, 
+                "Fork Failed \n");
+	 exit (-1);
+    }
+    else if(pid == 0)
+    {
+        execlp("cat", "cat", 
+               "/var/log/kern.log", NULL);
+    }
+    else
+    {
+        wait(NULL);
+	printf("Child complete \n");
+	exit (0);
+    }
+    return 0;
+}
+\end{lstlisting} 
+
+
 
 \section{Conclusions}
 No longer a hobbyist project,
