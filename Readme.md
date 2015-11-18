@@ -1,6 +1,6 @@
-Project Report
+Syscall Project Practical & Report
 ===
-Conference report-style paper on adding a sys_call.
+Conference report-style paper on adding a sys_call with included source code.
 
 Development
 ---
