@@ -1,0 +1,12 @@
+#
+# 32-bit system call numbers and entry vectors
+#
+# The format is:
+# <number> <abi> <name> <entry point> <compat entry point>
+#
+# The abi is always "i386" for this file.
+#
+
+# ...Line 358
+349	i386	hello			sys_hello
+350	i386	datastructs		sys_datastructs
